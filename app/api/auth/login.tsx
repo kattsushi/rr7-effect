@@ -2,12 +2,9 @@ import type * as Route from "./+types.login";
 import { AuthService } from "~/lib/context/auth.service";
 import * as T from "effect/Effect";
 import * as Context from 'effect/Context'
-import * as Layer from 'effect/Layer'
 
-import { getAuth } from "~/lib/auth/auth.server";
 import { ServerRuntime } from "~/lib/server-runtime";
-import { loaderEffect } from "~/lib/effect.server";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router"
+import type { LoaderFunctionArgs } from "react-router"
 
 // export async function loader({ request }: Route.LoaderArgs) {
 //   console.log("loader", request)
@@ -35,17 +32,19 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router"
 const LoaderArgs = Context.GenericTag<LoaderFunctionArgs>('LoaderArgs');
 
 export async function loader(args: LoaderFunctionArgs) {
-  console.log('args', args)
+  console.log('args', args) // here the logger shows the args fine but bellow in the yield* T.logInfo(args2.request) doesnt
   return ServerRuntime.runPromise(T.gen(function* () {
-    const { authenticator } = yield* AuthService.getAuth
-    const args2 = yield* LoaderArgs
+    const args2 = yield* LoaderArgs // i am providing bellow the context with T.provideService but is empty
     yield* T.log("authenticating")
     yield* T.logInfo(args2.request)
+    
+    return { success: 'hello worlld' }
 
-    return yield* T.promise(() => authenticator.authenticate("zitadel-openid", args2.request, {
-      successRedirect: "/admin",
-      failureRedirect: "/",
-    }))
+    // const { authenticator } = yield* AuthService.getAuth˚
+    // return yield* T.promise(() => authenticator.authenticate("zitadel-openid", args2.request, {
+    //   successRedirect: "/admin",
+    //   failureRedirect: "/",
+    // }))
   }).pipe(T.provideService(LoaderArgs, args)))
 }
 
