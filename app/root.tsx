@@ -14,7 +14,7 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: indexCss },
 ];
 
-function App({ children, loaderData }: Route.ComponentProps) {
+function App({ children }: Route.ComponentProps) {
   return (
     <html lang="en">
       <head>
@@ -32,7 +32,7 @@ function App({ children, loaderData }: Route.ComponentProps) {
   );
 }
 
-export default function AppWithProviders({ loaderData }: Route.ComponentProps) {
+export default function AppWithProviders() {
   return (
       <App>
         <Outlet />
